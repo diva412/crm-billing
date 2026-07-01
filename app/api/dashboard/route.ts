@@ -12,7 +12,6 @@ function currentMonthRange() {
 export async function GET() {
   const { start, end } = currentMonthRange();
 
-  // ── Counts ─────────────────────────────────────────────────────────────────
   const [
     totalLeads,
     totalCustomers,
@@ -31,7 +30,6 @@ export async function GET() {
     prisma.project.count({ where: { status: "COMPLETED" } }),
   ]);
 
-  // ── Monthly income = payments received this month ────────────────────────
   const monthlyPayments = await prisma.payment.findMany({
     where: { paidAt: { gte: start, lt: end } },
   });
@@ -39,7 +37,6 @@ export async function GET() {
     monthlyPayments.reduce((s, p) => s + Number(p.amount), 0)
   );
 
-  // ── Monthly expenses ─────────────────────────────────────────────────────
   const monthlyExpenses = await prisma.expense.aggregate({
     where: { date: { gte: start, lt: end } },
     _sum: { amount: true },
@@ -52,8 +49,6 @@ export async function GET() {
     currentMonthIncome - currentMonthExpenses
   );
 
-  // ── Invoice balances ──────────────────────────────────────────────────────
-  // Pending invoice amount = sum of all invoice finalAmounts minus all payments
   const allInvoices = await prisma.invoice.findMany({
     include: { payments: true },
   });
@@ -67,7 +62,6 @@ export async function GET() {
     0
   );
 
-  // Advance payments (linked to quotation only, no invoice)
   const advancePaymentsTotal = await prisma.payment.aggregate({
     where: { invoiceId: null },
     _sum: { amount: true },
@@ -84,13 +78,11 @@ export async function GET() {
     totalInvoicedAmount - receivedPayments
   );
 
-  // ── Tax filed (stub — no tax field in spec, approximated from payment notes) ──
-  // The spec lists "Tax Filed / Tax Not Filed" as a dashboard card.
-  // Without a dedicated tax module, we expose a placeholder for now.
-  const taxFiled = 0;
-  const taxNotFiled = 0;
+  const [taxFiled, taxNotFiled] = await Promise.all([
+    prisma.quotation.count({ where: { taxFiled: true } }),
+    prisma.quotation.count({ where: { taxFiled: false } }),
+  ]);
 
-  // ── Recent records ────────────────────────────────────────────────────────
   const [
     recentLeads,
     upcomingFollowUps,

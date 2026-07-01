@@ -92,14 +92,24 @@ export async function GET(req: NextRequest) {
       });
       return NextResponse.json({ type, projects });
     }
-
-    case "tax_filed": {
-      // Placeholder: no dedicated tax module in spec
-      return NextResponse.json({ type, records: [], total: 0 });
+     case "tax_filed": {
+      const quotations = await prisma.quotation.findMany({
+        where: { taxFiled: true, ...(dateFilter ? { taxFiledAt: dateFilter } : {}) },
+        include: { customer: true },
+        orderBy: { taxFiledAt: "desc" },
+      });
+      const totalGst = quotations.reduce((s, q) => s + Number(q.gstAmount), 0);
+      return NextResponse.json({ type, quotations, totalGst: Math.round(totalGst * 100) / 100, count: quotations.length });
     }
 
     case "tax_pending": {
-      return NextResponse.json({ type, records: [], total: 0 });
+      const quotations = await prisma.quotation.findMany({
+        where: { taxFiled: false },
+        include: { customer: true },
+        orderBy: { createdAt: "desc" },
+      });
+      const totalGst = quotations.reduce((s, q) => s + Number(q.gstAmount), 0);
+      return NextResponse.json({ type, quotations, totalGst: Math.round(totalGst * 100) / 100, count: quotations.length });
     }
 
     default:

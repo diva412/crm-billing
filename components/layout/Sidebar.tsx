@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { href: "/projects",   label: "Projects",     icon: "◫" },
   { href: "/expenses",   label: "Expenses",     icon: "◔" },
   { href: "/reports",    label: "Reports",      icon: "◑" },
+  { href: "/tax",        label: "Tax",          icon: "◎" },
 ];
 
 export default function Sidebar() {
@@ -29,10 +30,10 @@ export default function Sidebar() {
       {/* Brand */}
       <div style={{ padding: "24px 20px 16px", borderBottom: "1px solid #1e293b" }}>
         <div style={{ fontSize: 18, fontWeight: 800, color: "#fff", letterSpacing: "-0.02em" }}>
-          RITS CRM
+          CRM-BILLING
         </div>
         <div style={{ fontSize: 11, color: "var(--sidebar-text)", marginTop: 2 }}>
-          Billing Management
+          Management System
         </div>
       </div>
 

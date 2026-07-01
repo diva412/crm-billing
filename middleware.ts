@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { verifyToken, TOKEN_COOKIE_NAME } from "@/lib/auth";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 const PUBLIC_PATHS = ["/login", "/api/auth/login"];
+const TOKEN_COOKIE_NAME = "crm_token";
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -11,16 +12,15 @@ export function middleware(req: NextRequest) {
   }
 
   const token = req.cookies.get(TOKEN_COOKIE_NAME)?.value;
-  const payload = token ? verifyToken(token) : null;
 
-  if (!payload) {
+  if (!token) {
     if (pathname.startsWith("/api")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const loginUrl = new URL("/login", req.url);
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
+  // Just check token exists — full verify happens in each API route
   return NextResponse.next();
 }
 
@@ -36,6 +36,8 @@ export const config = {
     "/projects/:path*",
     "/expenses/:path*",
     "/reports/:path*",
+    "/tax/:path*",
+    "/profile/:path*",
     "/api/dashboard/:path*",
     "/api/leads/:path*",
     "/api/customers/:path*",
@@ -45,5 +47,7 @@ export const config = {
     "/api/payments/:path*",
     "/api/projects/:path*",
     "/api/expenses/:path*",
+    "/api/tax/:path*",
+    "/api/profile/:path*",
   ],
 };

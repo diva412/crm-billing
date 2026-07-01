@@ -6,8 +6,7 @@ const TOKEN_COOKIE_NAME = "crm_token";
 const TOKEN_EXPIRY = "7d";
 
 if (!JWT_SECRET) {
-  // Fail loudly at boot rather than silently signing tokens with "undefined"
-  throw new Error("JWT_SECRET is not set in the environment");
+  throw new Error("JWT_SECRET is not set in environment variables");
 }
 
 export interface AuthTokenPayload {
@@ -21,8 +20,9 @@ export async function hashPassword(plain: string): Promise<string> {
 
 export async function verifyPassword(
   plain: string,
-  hash: string
+  hash: string | null | undefined
 ): Promise<boolean> {
+  if (!hash) return false;
   return bcrypt.compare(plain, hash);
 }
 

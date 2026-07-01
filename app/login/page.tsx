@@ -76,7 +76,7 @@ export default function LoginPage() {
               letterSpacing: "-0.02em",
             }}
           >
-            RITS CRM
+            CRM-BILLING
           </div>
           <p style={{ margin: "6px 0 0", color: "var(--text-secondary)", fontSize: 14 }}>
             Sign in to your workspace
