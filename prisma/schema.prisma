@@ -1,0 +1,176 @@
+// This is a draft schema — start of planning, refine before running migrations.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  FOLLOW_UP
+  CONVERTED
+  LOST
+}
+
+enum FollowUpType {
+  CALL
+  WHATSAPP
+  EMAIL
+  MEETING
+}
+
+enum FollowUpStatus {
+  PENDING
+  COMPLETED
+  MISSED
+}
+
+enum ProjectStatus {
+  CURRENT
+  COMPLETED
+  ON_HOLD
+  CANCELLED
+}
+
+enum ExpenseCategory {
+  SALARY
+  SOFTWARE
+  DOMAIN
+  SERVER
+  MARKETING
+  OFFICE
+  TRAVEL
+  OTHERS
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+}
+
+model Lead {
+  id               String     @id @default(cuid())
+  name             String
+  mobile           String
+  email            String?
+  businessName     String?
+  interestedService String?
+  source           String?
+  status           LeadStatus @default(NEW)
+  notes            String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  convertedToCustomer Customer?
+  followUps           FollowUp[]
+}
+
+model Customer {
+  id           String   @id @default(cuid())
+  name         String
+  mobile       String
+  email        String?
+  businessName String?
+  address      String?
+  gstNumber    String?
+  status       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  convertedFromLeadId String? @unique
+  convertedFromLead   Lead?   @relation(fields: [convertedFromLeadId], references: [id])
+
+  followUps   FollowUp[]
+  quotations  Quotation[]
+  projects    Project[]
+}
+
+model FollowUp {
+  id         String         @id @default(cuid())
+  leadId     String?
+  customerId String?
+  lead       Lead?          @relation(fields: [leadId], references: [id])
+  customer   Customer?      @relation(fields: [customerId], references: [id])
+  date       DateTime
+  time       String
+  type       FollowUpType
+  notes      String?
+  status     FollowUpStatus @default(PENDING)
+  createdAt  DateTime       @default(now())
+}
+
+model Quotation {
+  id          String   @id @default(cuid())
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id])
+  service     String
+  description String?
+  finalAmount Decimal  @db.Decimal(12, 2) // GST-inclusive, user-entered
+  gstPercent  Decimal  @db.Decimal(5, 2)
+  subtotal    Decimal  @db.Decimal(12, 2) // computed server-side on write
+  gstAmount   Decimal  @db.Decimal(12, 2) // computed server-side on write
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  invoices Invoice[]
+  payments Payment[] // advance payments against this quotation
+  projects Project[]
+}
+
+model Invoice {
+  id          String   @id @default(cuid())
+  quotationId String
+  quotation   Quotation @relation(fields: [quotationId], references: [id])
+  finalAmount Decimal  @db.Decimal(12, 2) // GST-inclusive, user-entered
+  gstPercent  Decimal  @db.Decimal(5, 2)  // inherited from quotation at creation time
+  subtotal    Decimal  @db.Decimal(12, 2) // computed
+  gstAmount   Decimal  @db.Decimal(12, 2) // computed
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  payments Payment[]
+}
+
+model Payment {
+  id          String     @id @default(cuid())
+  quotationId String?
+  invoiceId   String?
+  quotation   Quotation? @relation(fields: [quotationId], references: [id])
+  invoice     Invoice?   @relation(fields: [invoiceId], references: [id])
+  amount      Decimal    @db.Decimal(12, 2)
+  paidAt      DateTime   @default(now())
+  notes       String?
+}
+
+model Project {
+  id          String        @id @default(cuid())
+  name        String
+  customerId  String
+  customer    Customer      @relation(fields: [customerId], references: [id])
+  quotationId String?
+  quotation   Quotation?    @relation(fields: [quotationId], references: [id])
+  startDate   DateTime
+  deadline    DateTime?
+  status      ProjectStatus @default(CURRENT)
+  notes       String?
+  createdAt   DateTime      @default(now())
+}
+
+model Expense {
+  id        String          @id @default(cuid())
+  name      String
+  category  ExpenseCategory
+  amount    Decimal         @db.Decimal(12, 2)
+  date      DateTime
+  notes     String?
+  createdAt DateTime        @default(now())
+}
