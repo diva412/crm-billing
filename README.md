@@ -62,40 +62,16 @@ npm install
 cp .env.example .env
 ```
 
-### 4. Fill in your `.env` file
-
-```env
-# Get from: Supabase → Project Settings → Database → Connection string
-# Use "Transaction" mode URL for DATABASE_URL (port 6543)
-DATABASE_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:6543/postgres?pgbouncer=true"
-
-# Use "Session" mode / Direct URL for DIRECT_URL (port 5432)
-DIRECT_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres"
-
-# Generate a strong secret: openssl rand -base64 32
-JWT_SECRET="your-random-secret-here"
-
-# Default admin credentials (used by the seed script)
-DEFAULT_ADMIN_EMAIL="admin@crmbilling.com"
-DEFAULT_ADMIN_PASSWORD="ChangeMe123!"
-```
-
-> **Note:**
-> - `DATABASE_URL` uses port **6543** (PgBouncer pooled) — for runtime queries
-> - `DIRECT_URL` uses port **5432** (direct connection) — required by Prisma migrations
-> - Never commit your `.env` file — it is already listed in `.gitignore`
-
----
 
 ## Database Setup
 
-### 5. Generate Prisma Client
+### 4. Generate Prisma Client
 
 ```bash
 npx prisma generate
 ```
 
-### 6. Run Migrations
+### 5. Run Migrations
 
 ```bash
 npx prisma migrate dev --name init
@@ -108,7 +84,7 @@ This creates all tables in your Supabase database.
 > npx prisma db push
 > ```
 
-### 7. Seed Default Admin Account
+### 6. Seed Default Admin Account
 
 ```bash
 npx prisma db seed
@@ -264,23 +240,6 @@ vercel
 
 Add all variables from `.env.example` in:
 **Vercel Dashboard → Project → Settings → Environment Variables**
-
----
-
-## Screen Recording Checklist (3–5 minutes)
-
-Cover these in your recording:
-
-1. Login page → sign in
-2. Dashboard — show all stat cards and recent tables
-3. Create a Lead → convert to Customer
-4. Create a Quotation — show live GST breakdown
-5. Create an Invoice from Quotation — show remaining balance
-6. Record a Payment — show balance update
-7. Create a Project linked to customer + quotation
-8. Add an Expense with category
-9. Tax module — mark a quotation as filed
-10. Reports — run Income and Profit report with date range
 
 ---
 
