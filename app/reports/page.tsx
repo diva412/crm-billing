@@ -150,7 +150,7 @@ export default function ReportsPage() {
                 <tbody>
                   {(data.invoices as never[]).map((inv: Record<string, unknown>, i: number) => (
                     <tr key={i}>
-                      <td>{(inv.quotation as Record<string, unknown>)?.customer?.name as string ?? "—"}</td>
+                      <td>{((inv.quotation as Record<string, unknown>)?.customer as Record<string, unknown>)?.name as string ?? "—"}</td>
                       <td>{(inv.quotation as Record<string, unknown>)?.service as string ?? "—"}</td>
                       <td>{fmt(Number(inv.finalAmount))}</td>
                       <td style={{ fontWeight: 700, color: "var(--warning)" }}>{fmt(Number(inv.balance))}</td>
@@ -252,7 +252,7 @@ function PaymentsTable({ payments }: { payments: Record<string, unknown>[] }) {
           <tr key={i}>
             <td>
               {((p.quotation as Record<string, unknown>)?.customer as Record<string, unknown>)?.name as string ??
-               ((p.invoice as Record<string, unknown>)?.quotation as Record<string, unknown>)?.customer?.name as string ?? "—"}
+              (((p.invoice as Record<string, unknown>)?.quotation as Record<string, unknown>)?.customer as Record<string, unknown>)?.name as string ?? "—"}
             </td>
             <td>
               <span className={`badge ${p.invoiceId ? "badge-current" : "badge-follow_up"}`}>

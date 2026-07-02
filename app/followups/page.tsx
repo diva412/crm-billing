@@ -49,7 +49,7 @@ export default function FollowUpsPage() {
 
   function openCreate() { setForm(EMPTY); setEditId(""); setModal("create"); }
   function openEdit(fu: FollowUp) {
-    setForm({ leadId: fu.leadId ?? "", customerId: fu.customerId ?? "", date: fu.date.slice(0, 10), time: fu.time, type: fu.type, notes: fu.notes ?? "", status: fu.status });
+    setForm({ leadId: fu.leadId ?? "", customerId: fu.customerId ?? "", date: fu.date.slice(0, 10), time: fu.time, type: fu.type as "CALL", notes: fu.notes ?? "", status: fu.status as "PENDING" });
     setLinkTo(fu.customerId ? "customer" : "lead");
     setEditId(fu.id);
     setModal("edit");
