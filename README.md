@@ -229,13 +229,14 @@ Example: ₹20,000 at 18% GST → Subtotal ₹16,949.15 + GST ₹3,050.85
 
 ---
 
-## Deployment (Optional)
+## Deployment 
 
 ### Deploy to Vercel
 
 ```bash
 npm install -g vercel
 vercel
+
 ```
 
 Add all variables from `.env.example` in:
