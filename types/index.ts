@@ -130,3 +130,14 @@ export interface DashboardCards {
   taxFiled: number;
   taxNotFiled: number;
 }
+export interface DashboardData {
+  cards: DashboardCards;
+  recent: {
+    recentLeads: Lead[];
+    upcomingFollowUps: FollowUp[];
+    recentQuotations: Quotation[];
+    recentInvoices: Invoice[];
+    currentProjectsList: Project[];
+    recentExpenses: Expense[];
+  };
+}
