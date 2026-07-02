@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { leadSchema } from "@/lib/validations";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
             ],
           }
         : {},
-      status ? { status: status as Prisma.EnumLeadStatusFilter["equals"] } : {},
+      status ? { status: status as any } : {},
     ],
   };
 
