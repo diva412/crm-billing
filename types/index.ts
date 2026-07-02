@@ -1,5 +1,3 @@
-// ─── Enums ────────────────────────────────────────────────────────────────────
-
 export type LeadStatus = "NEW" | "CONTACTED" | "FOLLOW_UP" | "CONVERTED" | "LOST";
 export type FollowUpType = "CALL" | "WHATSAPP" | "EMAIL" | "MEETING";
 export type FollowUpStatus = "PENDING" | "COMPLETED" | "MISSED";
@@ -7,8 +5,6 @@ export type ProjectStatus = "CURRENT" | "COMPLETED" | "ON_HOLD" | "CANCELLED";
 export type ExpenseCategory =
   | "SALARY" | "SOFTWARE" | "DOMAIN" | "SERVER"
   | "MARKETING" | "OFFICE" | "TRAVEL" | "OTHERS";
-
-// ─── Core Models ─────────────────────────────────────────────────────────────
 
 export interface User {
   id: string;
@@ -127,8 +123,6 @@ export interface Expense {
   createdAt: string;
 }
 
-// ─── Dashboard ───────────────────────────────────────────────────────────────
-
 export interface DashboardCards {
   totalLeads: number;
   totalCustomers: number;
@@ -158,8 +152,6 @@ export interface DashboardData {
     recentExpenses: Expense[];
   };
 }
-
-// ─── API helpers ─────────────────────────────────────────────────────────────
 
 export interface ApiError {
   error: string;
