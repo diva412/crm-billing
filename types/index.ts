@@ -1,33 +1,20 @@
-/* ================= ENUMS ================= */
+// ─── Enums ────────────────────────────────────────────────────────────────────
 
-export type LeadStatus =
-  | "NEW"
-  | "CONTACTED"
-  | "FOLLOW_UP"
-  | "CONVERTED"
-  | "LOST";
-
+export type LeadStatus = "NEW" | "CONTACTED" | "FOLLOW_UP" | "CONVERTED" | "LOST";
 export type FollowUpType = "CALL" | "WHATSAPP" | "EMAIL" | "MEETING";
-
 export type FollowUpStatus = "PENDING" | "COMPLETED" | "MISSED";
-
-export type ProjectStatus =
-  | "CURRENT"
-  | "COMPLETED"
-  | "ON_HOLD"
-  | "CANCELLED";
-
+export type ProjectStatus = "CURRENT" | "COMPLETED" | "ON_HOLD" | "CANCELLED";
 export type ExpenseCategory =
-  | "SALARY"
-  | "SOFTWARE"
-  | "DOMAIN"
-  | "SERVER"
-  | "MARKETING"
-  | "OFFICE"
-  | "TRAVEL"
-  | "OTHERS";
+  | "SALARY" | "SOFTWARE" | "DOMAIN" | "SERVER"
+  | "MARKETING" | "OFFICE" | "TRAVEL" | "OTHERS";
 
-/* ================= CORE ================= */
+// ─── Core Models ─────────────────────────────────────────────────────────────
+
+export interface User {
+  id: string;
+  email: string;
+  name?: string;
+}
 
 export interface Lead {
   id: string;
@@ -81,6 +68,8 @@ export interface Quotation {
   gstPercent: number;
   subtotal: number;
   gstAmount: number;
+  taxFiled: boolean;
+  taxFiledAt?: string;
   createdAt: string;
   updatedAt: string;
   invoices?: Invoice[];
@@ -100,18 +89,45 @@ export interface Invoice {
   payments?: Payment[];
   balance?: number;
   advanceApplied?: number;
+  alreadyReceived?: number;
 }
 
 export interface Payment {
   id: string;
   quotationId?: string;
   invoiceId?: string;
+  quotation?: Quotation;
+  invoice?: Invoice;
   amount: number;
   paidAt: string;
   notes?: string;
 }
 
-/* ================= DASHBOARD ================= */
+export interface Project {
+  id: string;
+  name: string;
+  customerId: string;
+  customer?: Customer;
+  quotationId?: string;
+  quotation?: Quotation;
+  startDate: string;
+  deadline?: string;
+  status: ProjectStatus;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface Expense {
+  id: string;
+  name: string;
+  category: ExpenseCategory;
+  amount: number;
+  date: string;
+  notes?: string;
+  createdAt: string;
+}
+
+// ─── Dashboard ───────────────────────────────────────────────────────────────
 
 export interface DashboardCards {
   totalLeads: number;
@@ -130,6 +146,7 @@ export interface DashboardCards {
   taxFiled: number;
   taxNotFiled: number;
 }
+
 export interface DashboardData {
   cards: DashboardCards;
   recent: {
@@ -141,3 +158,11 @@ export interface DashboardData {
     recentExpenses: Expense[];
   };
 }
+
+// ─── API helpers ─────────────────────────────────────────────────────────────
+
+export interface ApiError {
+  error: string;
+}
+
+export type ApiResponse<T> = T | ApiError;
